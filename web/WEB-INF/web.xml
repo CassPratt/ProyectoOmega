@@ -10,7 +10,7 @@
     </servlet>
     <servlet>
         <servlet-name>creacionBaseDatos</servlet-name>
-        <servlet-class>creacionBaseDatos</servlet-class>
+        <servlet-class>servletsManipulacionBaseDatos.creacionBaseDatos</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>

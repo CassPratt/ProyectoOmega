@@ -1,3 +1,5 @@
+package servletsManipulacionBaseDatos;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -26,7 +28,8 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author EUCJ LA VIDA DE PABLO
+ * @author EUCJ 
+ * LA VIDA DE PABLO
  */
 public class creacionBaseDatos extends HttpServlet {
 
@@ -41,15 +44,15 @@ public class creacionBaseDatos extends HttpServlet {
         String usuario=request.getParameter("usuario");
         String password=request.getParameter("contrasenia");
         
-        String[] bases=(String[])session.getAttribute("bases");
-        String[] basesAux=new String[bases.length+1];
-        int i=0;
-        while(i<bases.length){
-            basesAux[i]=bases[i];
-           i++;
-        }
-        basesAux[i]=nombreBD;
-        session.setAttribute("bases", basesAux);
+//        String[] bases=(String[])session.getAttribute("bases");
+//        String[] basesAux=new String[bases.length+1];
+//        int i=0;
+//        while(i<bases.length){
+//            basesAux[i]=bases[i];
+//           i++;
+//        }
+//        basesAux[i]=nombreBD;
+//        session.setAttribute("bases", basesAux);
         
         
         
@@ -72,18 +75,19 @@ public class creacionBaseDatos extends HttpServlet {
         try {
             //El parametro create=true crea la base de datos con las propiedaddes establecidas
             Connection conexion = DriverManager.getConnection(protocol + nombreBD + ";create=true", propiedades);
-            resultado = "Se creo la base de datos " + nombreBD + " con exito";
+            resultado = "Se creo la base de datos " + nombreBD + " con exito.";
             
             
             
             
           
             
-            //Cerrando base de datos
+            //Cerrando conexion a base de datos
             conexion.close();
         } catch (SQLException ex) {
             Logger.getLogger(creacionBaseDatos.class.getName()).log(Level.SEVERE, null, ex);
-            resultado = "No fue posible crear la base de datos " + nombreBD + " porque " + ex.toString();
+            //Si error, enviar excepcion como respuesta
+            resultado = "No fue posible crear la base de datos " + nombreBD + ", error: " + ex.toString();
         }
 
         //Crear respuesta en JSON
