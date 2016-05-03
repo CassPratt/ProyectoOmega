@@ -8,6 +8,10 @@
         <servlet-name>RegisterUser</servlet-name>
         <servlet-class>servletsUsersMgmt.RegisterUser</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>creacionBaseDatos</servlet-name>
+        <servlet-class>creacionBaseDatos</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/Login</url-pattern>
@@ -15,6 +19,10 @@
     <servlet-mapping>
         <servlet-name>RegisterUser</servlet-name>
         <url-pattern>/RegisterUser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>creacionBaseDatos</servlet-name>
+        <url-pattern>/creacionBaseDatos</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
