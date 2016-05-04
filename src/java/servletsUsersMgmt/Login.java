@@ -36,21 +36,22 @@ public class Login extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             try {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
-                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/DWWUsers", "dwwAdmin", "dwwAdmin");
+                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/AdminUsuarios", "administrador", "administrador");
                 Statement query = con.createStatement();
-                String username = request.getParameter("username");
+                String username = request.getParameter("usuario");
                 String password = request.getParameter("password");
-                ResultSet rs = query.executeQuery("SELECT * FROM USERS WHERE USERNAME = '" + username + "' and PASSWORD='" + password + "'");
+                ResultSet rs = query.executeQuery("SELECT * FROM USUARIOS WHERE USERNAME = '" + username + "' and PASSWORD='" + password + "'");
                 if (rs.next()) {
                     HttpSession mySession = request.getSession();
-                    mySession.setAttribute("username", username);
-                    response.sendRedirect("welcome.jsp");
+                    mySession.setAttribute("usuario", username);
+                    response.sendRedirect("crearBaseDatos.jsp");
                 } else {
                     request.setAttribute("loginSuccess","NO");
                     String next = "/index.jsp";
@@ -66,7 +67,6 @@ public class Login extends HttpServlet {
             }
         }
     }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

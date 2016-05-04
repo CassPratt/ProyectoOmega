@@ -5,7 +5,6 @@ package servletsManipulacionBaseDatos;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -28,8 +27,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author EUCJ 
- * LA VIDA DE PABLO
+ * @author EUCJ LA VIDA DE PABLO
  */
 public class creacionBaseDatos extends HttpServlet {
 
@@ -37,63 +35,44 @@ public class creacionBaseDatos extends HttpServlet {
     private final String protocol = "jdbc:derby://localhost:1527/";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ClassNotFoundException {
         HttpSession session = request.getSession();
         String resultado;
         String nombreBD = request.getParameter("nombre");
-        String usuario=request.getParameter("usuario");
-        String password=request.getParameter("contrasenia");
-        
-//        String[] bases=(String[])session.getAttribute("bases");
-//        String[] basesAux=new String[bases.length+1];
-//        int i=0;
-//        while(i<bases.length){
-//            basesAux[i]=bases[i];
-//           i++;
-//        }
-//        basesAux[i]=nombreBD;
-//        session.setAttribute("bases", basesAux);
-        
-        
-        
-        
-        
-        
-        
-        
+        String usuario = request.getParameter("usuario");
+
+        String password = request.getParameter("contrasenia");
 
         Properties propiedades = new Properties();
         //Poniendo parametros como propiedades para la base de datos
         propiedades.put("user", usuario);
-        propiedades.put("password",password);
+        propiedades.put("password", password);
         //Estableciendo nombre de base de datos
-       
-        
-        
-
 
         try {
-            //El parametro create=true crea la base de datos con las propiedaddes establecidas
-            Connection conexion = DriverManager.getConnection(protocol + nombreBD + ";create=true", propiedades);
-            resultado = "Se creo la base de datos " + nombreBD + " con exito.";
-            
-            
-            
-            
-          
-            
-            //Cerrando conexion a base de datos
-            conexion.close();
+
+            String resultadoRegistro = registrarBD((String) session.getAttribute("usuario"), nombreBD);
+            if (resultadoRegistro.equals("exito")) {
+                //El parametro create=true crea la base de datos con las propiedaddes establecidas
+                Connection conexion = DriverManager.getConnection(protocol + nombreBD + ";create=true", propiedades);
+                resultado = "Se creo la base de datos " + nombreBD + " con exito.";
+                conexion.close();
+
+            } else {
+                resultado = resultadoRegistro;
+            }
+
         } catch (SQLException ex) {
             Logger.getLogger(creacionBaseDatos.class.getName()).log(Level.SEVERE, null, ex);
             //Si error, enviar excepcion como respuesta
             resultado = "No fue posible crear la base de datos " + nombreBD + ", error: " + ex.toString();
         }
 
-        //Crear respuesta en JSON
+        //Crear respuesta en JSON, resultado de la operación y arreglo de bases creadas por el usuario transformada en arreglo JSON para parse de JQUERY
         response.setContentType("application/json");
-        
-        JsonObject jsonRespuesta = Json.createObjectBuilder().add("resultado", resultado).build();
+        String bases = obtenerBasesUsuario((String) session.getAttribute("usuario"));
+
+        JsonObject jsonRespuesta = Json.createObjectBuilder().add("resultado", resultado).add("bases", bases).build();
 
         //Enviar respuesta JSON
         try (PrintWriter out = response.getWriter()) {
@@ -107,13 +86,25 @@ public class creacionBaseDatos extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(creacionBaseDatos.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(creacionBaseDatos.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -121,24 +112,98 @@ public class creacionBaseDatos extends HttpServlet {
         return "Short description";
     }
 
-    public String rsAString(ResultSet resultSet) {
+    public String rsAArregloJson(ResultSet resultSet) {
         StringBuilder builder = new StringBuilder();
         try {
-
-            int columnCount = resultSet.getMetaData().getColumnCount();
+            builder.append("[");
+            int cuentaColumnas = resultSet.getMetaData().getColumnCount();
+            
+            //Solo esta hecho para resultsets de 1
             while (resultSet.next()) {
-                for (int i = 0; i < columnCount;) {
-                    builder.append(resultSet.getString(i + 1));
-                    if (++i < columnCount) {
-                        builder.append(",");
-                    }
+                for (int i = 0; i < cuentaColumnas; i++) {
+                    builder.append("\"" + resultSet.getString(i + 1) + "\",");
+
                 }
-                builder.append("\r\n");
+
+            }
+
+            int ultimo = builder.length() - 1;
+            builder.deleteCharAt(ultimo);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(creacionBaseDatos.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        builder.append("]");
+        return builder.toString();
+    }
+
+    public String registrarBD(String usuario, String nombreBD) throws ClassNotFoundException {
+
+        try {
+
+            int id = obtenerIdUsuario(usuario);
+
+            if (id != -1) {
+                Connection con = DriverManager.getConnection(protocol + "AdminUsuarios", "administrador", "administrador");
+
+                Statement query = con.createStatement();
+
+                query.executeUpdate("INSERT INTO BASES (USERID,DBNAME) VALUES (" + id + ",'" + nombreBD + "')");
+                con.close();
+                return "exito";
+            } else {
+                throw new SQLException("No existe el usuario" + usuario);
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(creacionBaseDatos.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(creacionBaseDatos.class
+                    .getName()).log(Level.SEVERE, null, ex);
+            return ex.toString();
         }
-        return builder.toString();
+
+    }
+
+    public int obtenerIdUsuario(String usuario) {
+
+        try {
+            Connection con = DriverManager.getConnection(protocol + "AdminUsuarios", "administrador", "administrador");
+
+            Statement query = con.createStatement();
+            ResultSet rs = query.executeQuery("SELECT ID_USER FROM USUARIOS WHERE USERNAME='" + usuario + "'");
+            rs.next();
+            int id = rs.getInt("ID_USER");
+            con.close();
+            return id;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(creacionBaseDatos.class
+                    .getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+
+    }
+
+    public String obtenerBasesUsuario(String usuario) {
+
+        try {
+
+            int id = obtenerIdUsuario(usuario);
+
+            Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/AdminUsuarios", "administrador", "administrador");
+
+            Statement query = con.createStatement();
+            ResultSet rs = query.executeQuery("SELECT DBNAME FROM BASES WHERE USERID=" + id);
+            String r = rsAArregloJson(rs);
+            con.close();
+
+        
+            return r;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(creacionBaseDatos.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+
     }
 }

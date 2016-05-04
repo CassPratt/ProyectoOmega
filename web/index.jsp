@@ -38,7 +38,7 @@
         <h1>DataWeb Wizard</h1>
         <h3>Login into your account to experience the magic!</h3>
         <form action="Login" method="POST">
-            Username: <input type="text" name="username" value="" required="required" /> <br>
+            Username: <input type="text" name="usuario" value="" required="required" /> <br>
             Password: <input type="password" name="password" value="" required="required"/><br>
             <input type="submit" value="Login" />
         </form>

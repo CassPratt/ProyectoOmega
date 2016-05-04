@@ -41,16 +41,18 @@ public class RegisterUser extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             try {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
-                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/DWWUsers", "dwwAdmin", "dwwAdmin");
+                //Esta base de datos tiene que estar creada previamente en el servidor
+                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/AdminUsuarios", "administrador", "administrador");
                 Statement query = con.createStatement();
-                String username = request.getParameter("username");
+                String username = request.getParameter("usuario");
                 String password = request.getParameter("password");
-                ResultSet rs = query.executeQuery("SELECT * FROM USERS WHERE USERNAME = '" + username + "'");
+                ResultSet rs = query.executeQuery("SELECT * FROM USUARIOS WHERE USERNAME = '" + username + "'");
                 String next = "";
                 if (!rs.next()) {
                     request.setAttribute("fromRegisterUser", (Object)"YES");
                     out.print("Usuario válido");
-                    query.executeUpdate("INSERT INTO USERS(USERNAME,PASSWORD) VALUES('" + username + "','" + password + "')");
+                    query.executeUpdate("INSERT INTO USUARIOS(USERNAME,PASSWORD) VALUES('" + username + "','" + password + "')");
+                    
                     next = "/index.jsp";
                 } else {
                     request.setAttribute("fromRegisterUser", (Object)"NO");
@@ -59,6 +61,7 @@ public class RegisterUser extends HttpServlet {
                 }
                 RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher(next);
                 dispatcher.forward(request,response);
+                con.close();
             }
             catch (SQLException ex) {
                 Logger.getLogger(RegisterUser.class.getName()).log(Level.SEVERE, null, ex);
