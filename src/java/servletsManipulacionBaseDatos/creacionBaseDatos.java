@@ -112,13 +112,13 @@ public class creacionBaseDatos extends HttpServlet {
         return "Short description";
     }
 
-    public String rsAArregloJson(ResultSet resultSet) {
+    public String resultSetAArregloStringParaJson(ResultSet resultSet) {
         StringBuilder builder = new StringBuilder();
         try {
             builder.append("[");
             int cuentaColumnas = resultSet.getMetaData().getColumnCount();
             
-            //Solo esta hecho para resultsets de 1
+            //Solo esta hecho para resultsets de 1 columna
             while (resultSet.next()) {
                 for (int i = 0; i < cuentaColumnas; i++) {
                     builder.append("\"" + resultSet.getString(i + 1) + "\",");
@@ -153,7 +153,7 @@ public class creacionBaseDatos extends HttpServlet {
                 con.close();
                 return "exito";
             } else {
-                throw new SQLException("No existe el usuario" + usuario);
+                throw new SQLException("No existe el usuario o hubo un error al obtener el id de " + usuario);
             }
 
         } catch (SQLException ex) {
@@ -194,7 +194,7 @@ public class creacionBaseDatos extends HttpServlet {
 
             Statement query = con.createStatement();
             ResultSet rs = query.executeQuery("SELECT DBNAME FROM BASES WHERE USERID=" + id);
-            String r = rsAArregloJson(rs);
+            String r = resultSetAArregloStringParaJson(rs);
             con.close();
 
         
