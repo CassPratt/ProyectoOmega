@@ -22,7 +22,7 @@ and open the template in the editor.
 
     <body>
 
-        <form id="formaBaseDatos">
+        <form id="formaBaseDatos" action="creacionBaseDatos" method="POST">
             <h1>Crear base de datos</h1>
             <label>Nombre de la base de datos</label>
             <input type="text" name="nombre" value="" />
@@ -30,40 +30,14 @@ and open the template in the editor.
             <input type="text" name="usuario" value="" />
             <label>Contraseña</label>
             <input type="text" name="contrasenia" value="" />
-            <input type="submit" value="Crear" id="button" />
+            <input type="submit" value="Crear base" id="button" />
         </form>
-
-        <p id="resultadoBaseDatos"></p>
         
-        <select id="bases" name="">
-          
-        </select>
-
-
-
-
-
-        <script>
-            $("#formaBaseDatos").submit(function (e) {
-                e.preventDefault();
-                var actionurl = e.currentTarget.action;
-                $.ajax({
-                    url: 'creacionBaseDatos',
-                    type: 'post',
-                    dataType: 'json',
-                    data: $("#formaBaseDatos").serialize(),
-                    success: function (data) {
-                        $("#resultadoBaseDatos").text(data.resultado);
-                        $.each(JSON.parse(data.bases), function(i, value) {
-            $('#bases').append($('<option>').text(value).attr('value', value));
-        });
-                        
-                        
-                    }});
-            });
-
-
-        </script>
-    </body>
+        
+        <form action="creacionBaseDatos" method="GET">
+    <input type="submit" value="Crear tablas">
+</form>
+        
+     
 
 </html>

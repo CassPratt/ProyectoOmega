@@ -18,11 +18,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import javax.json.Json;
-
 import java.util.Properties;
-import javax.json.JsonObject;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -31,10 +29,12 @@ import javax.servlet.http.HttpSession;
  */
 public class creacionBaseDatos extends HttpServlet {
 
-    private final String framework = "embedded";
-    private final String protocol = "jdbc:derby://localhost:1527/";
+    private final String protocolo = "jdbc:derby://localhost:1527/";
+    private final String baseAdmin = "AdminUsuarios";
+    private final String usuarioAdmin = "administrador";
+    private final String passwordAdmin = "administrador";
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequestPOST(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException {
         HttpSession session = request.getSession();
         String resultado;
@@ -54,7 +54,7 @@ public class creacionBaseDatos extends HttpServlet {
             String resultadoRegistro = registrarBD((String) session.getAttribute("usuario"), nombreBD);
             if (resultadoRegistro.equals("exito")) {
                 //El parametro create=true crea la base de datos con las propiedaddes establecidas
-                Connection conexion = DriverManager.getConnection(protocol + nombreBD + ";create=true", propiedades);
+                Connection conexion = DriverManager.getConnection(protocolo + nombreBD + ";create=true", propiedades);
                 resultado = "Se creo la base de datos " + nombreBD + " con exito.";
                 conexion.close();
 
@@ -69,14 +69,35 @@ public class creacionBaseDatos extends HttpServlet {
         }
 
         //Crear respuesta en JSON, resultado de la operación y arreglo de bases creadas por el usuario transformada en arreglo JSON para parse de JQUERY
-        response.setContentType("application/json");
-        String bases = obtenerBasesUsuario((String) session.getAttribute("usuario"));
-
-        JsonObject jsonRespuesta = Json.createObjectBuilder().add("resultado", resultado).add("bases", bases).build();
+        response.setContentType("text/html");
 
         //Enviar respuesta JSON
         try (PrintWriter out = response.getWriter()) {
-            out.println(jsonRespuesta);
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Resultado</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>" + resultado + "</h1>");
+
+            if (resultado.equals("Se creo la base de datos " + nombreBD + " con exito.")) {
+
+                out.println("     <form action=\"crearTablas\">\n"
+                        + "    <input type=\"submit\" value=\"Crear tablas\">\n"
+                        + "</form>\n"
+                        + "        \n"
+                        + "               <form action=\"crearBaseDatos\">\n"
+                        + "    <input type=\"submit\" value=\"Crear otra base\">\n"
+                        + "</form>");
+            } else {
+                out.println("    <form action=\"crearBaseDatos\">\n"
+                        + "    <input type=\"submit\" value=\"Intentar de nuevo\">\n"
+                        + "</form>");
+
+            }
+            out.println("</body>");
+            out.println("</html>");
             out.close();
 
         }
@@ -86,20 +107,14 @@ public class creacionBaseDatos extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(creacionBaseDatos.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequestGET(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            processRequest(request, response);
+            processRequestPOST(request, response);
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(creacionBaseDatos.class
@@ -112,42 +127,19 @@ public class creacionBaseDatos extends HttpServlet {
         return "Short description";
     }
 
-    public String resultSetAArregloStringParaJson(ResultSet resultSet) {
-        StringBuilder builder = new StringBuilder();
-        try {
-            builder.append("[");
-            int cuentaColumnas = resultSet.getMetaData().getColumnCount();
-            
-            //Solo esta hecho para resultsets de 1 columna
-            while (resultSet.next()) {
-                for (int i = 0; i < cuentaColumnas; i++) {
-                    builder.append("\"" + resultSet.getString(i + 1) + "\",");
-
-                }
-
-            }
-
-            int ultimo = builder.length() - 1;
-            builder.deleteCharAt(ultimo);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(creacionBaseDatos.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        }
-        builder.append("]");
-        return builder.toString();
-    }
-
     public String registrarBD(String usuario, String nombreBD) throws ClassNotFoundException {
 
         try {
+            Connection con = DriverManager.getConnection(protocolo + baseAdmin, usuarioAdmin, passwordAdmin);
 
-            int id = obtenerIdUsuario(usuario);
+            Statement query = con.createStatement();
+            ResultSet rs = query.executeQuery("SELECT ID_USER FROM USUARIOS WHERE USERNAME='" + usuario + "'");
+            rs.next();
+            int id = rs.getInt("ID_USER");
 
             if (id != -1) {
-                Connection con = DriverManager.getConnection(protocol + "AdminUsuarios", "administrador", "administrador");
 
-                Statement query = con.createStatement();
+                query = con.createStatement();
 
                 query.executeUpdate("INSERT INTO BASES (USERID,DBNAME) VALUES (" + id + ",'" + nombreBD + "')");
                 con.close();
@@ -164,46 +156,11 @@ public class creacionBaseDatos extends HttpServlet {
 
     }
 
-    public int obtenerIdUsuario(String usuario) {
+    private void processRequestGET(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        try {
-            Connection con = DriverManager.getConnection(protocol + "AdminUsuarios", "administrador", "administrador");
-
-            Statement query = con.createStatement();
-            ResultSet rs = query.executeQuery("SELECT ID_USER FROM USUARIOS WHERE USERNAME='" + usuario + "'");
-            rs.next();
-            int id = rs.getInt("ID_USER");
-            con.close();
-            return id;
-
-        } catch (SQLException ex) {
-            Logger.getLogger(creacionBaseDatos.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            return -1;
-        }
-
+        ServletContext context = getServletContext();
+        RequestDispatcher rd = context.getRequestDispatcher("/creacionTablas");
+        rd.forward(request, response);
     }
 
-    public String obtenerBasesUsuario(String usuario) {
-
-        try {
-
-            int id = obtenerIdUsuario(usuario);
-
-            Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/AdminUsuarios", "administrador", "administrador");
-
-            Statement query = con.createStatement();
-            ResultSet rs = query.executeQuery("SELECT DBNAME FROM BASES WHERE USERID=" + id);
-            String r = resultSetAArregloStringParaJson(rs);
-            con.close();
-
-        
-            return r;
-
-        } catch (SQLException ex) {
-            Logger.getLogger(creacionBaseDatos.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-
-    }
 }

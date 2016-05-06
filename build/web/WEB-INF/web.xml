@@ -12,6 +12,10 @@
         <servlet-name>creacionBaseDatos</servlet-name>
         <servlet-class>servletsManipulacionBaseDatos.creacionBaseDatos</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>creacionTablas</servlet-name>
+        <servlet-class>servletsManipulacionBaseDatos.creacionTablas</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/Login</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>creacionBaseDatos</servlet-name>
         <url-pattern>/creacionBaseDatos</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>creacionTablas</servlet-name>
+        <url-pattern>/creacionTablas</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
