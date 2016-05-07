@@ -35,13 +35,18 @@
             }
             request.removeAttribute("loginSuccess");
         %>
+        
         <h1>DataWeb Wizard</h1>
         <h3>Login into your account to experience the magic!</h3>
+        
+        <!---------------- LOGIN FORM ---------------->
         <form action="Login" method="POST">
             Username: <input type="text" name="usuario" value="" required="required" /> <br>
             Password: <input type="password" name="password" value="" required="required"/><br>
             <input type="submit" value="Login" />
         </form>
+        
+        <!---------------- SIGN UP FORM ---------------->
         <form action="signup.jsp" method="POST">
             <br>Not registered yet?
             <input type="submit" value="Sign Up" />

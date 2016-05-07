@@ -1,10 +1,5 @@
 package servletsManipulacionBaseDatos;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -25,9 +20,9 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author EUCJ LA VIDA DE PABLO
+ * @author EUCJ
  */
-public class creacionBaseDatos extends HttpServlet {
+public class CreateDB extends HttpServlet {
 
     private final String protocolo = "jdbc:derby://localhost:1527/";
     private final String baseAdmin = "AdminUsuarios";
@@ -44,18 +39,18 @@ public class creacionBaseDatos extends HttpServlet {
         String password = request.getParameter("contrasenia");
 
         Properties propiedades = new Properties();
-        //Poniendo parametros como propiedades para la base de datos
+        //Creating parameters as properties for the DB
         propiedades.put("user", usuario);
         propiedades.put("password", password);
-        //Estableciendo nombre de base de datos
+        //Stablishing the DB name
 
         try {
-
+            // Connecting and creating the DB
             String resultadoRegistro = registrarBD((String) session.getAttribute("usuario"), nombreBD);
             if (resultadoRegistro.equals("exito")) {
-                //El parametro create=true crea la base de datos con las propiedaddes establecidas
+                //The paremeter "create=true" creates the DB with the indicated properties
                 Connection conexion = DriverManager.getConnection(protocolo + nombreBD + ";create=true", propiedades);
-                resultado = "Se creo la base de datos " + nombreBD + " con exito.";
+                resultado = "The database with name " + nombreBD + " was created successfully.";
                 conexion.close();
 
             } else {
@@ -63,43 +58,40 @@ public class creacionBaseDatos extends HttpServlet {
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(creacionBaseDatos.class.getName()).log(Level.SEVERE, null, ex);
-            //Si error, enviar excepcion como respuesta
-            resultado = "No fue posible crear la base de datos " + nombreBD + ", error: " + ex.toString();
+            Logger.getLogger(CreateDB.class.getName()).log(Level.SEVERE, null, ex);
+            //Sending exception error
+            resultado = "The database with name " + nombreBD + " couldn't be created, error: " + ex.toString();
         }
 
-        //Crear respuesta en JSON, resultado de la operación y arreglo de bases creadas por el usuario transformada en arreglo JSON para parse de JQUERY
-        response.setContentType("text/html");
-
-        //Enviar respuesta JSON
+        //  Page for results of creating DB
+        // THIS CAN BE A .JSP FILE, NOT A MANUALLY PRINTED ONE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Resultado</title>");
+            out.println("<title>DB created</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>" + resultado + "</h1>");
 
-            if (resultado.equals("Se creo la base de datos " + nombreBD + " con exito.")) {
+            if (resultado.equals("The database with name " + nombreBD + " was created successfully.")) {
 
-                out.println("     <form action=\"crearTablas\">\n"
-                        + "    <input type=\"submit\" value=\"Crear tablas\">\n"
+                out.println("     <form action=\"CreateTables\">\n"
+                        + "    <input type=\"submit\" value=\"Create tables\">\n"
                         + "</form>\n"
                         + "        \n"
-                        + "               <form action=\"crearBaseDatos\">\n"
-                        + "    <input type=\"submit\" value=\"Crear otra base\">\n"
+                        + "               <form action=\"welcome.jsp\">\n"
+                        + "    <input type=\"submit\" value=\"Go to dashboard\">\n"
                         + "</form>");
             } else {
-                out.println("    <form action=\"crearBaseDatos\">\n"
-                        + "    <input type=\"submit\" value=\"Intentar de nuevo\">\n"
+                out.println("    <form action=\"welcome.jsp\">\n"
+                        + "    <input type=\"submit\" value=\"Go to dashboard\">\n"
                         + "</form>");
 
             }
             out.println("</body>");
             out.println("</html>");
             out.close();
-
         }
 
     }
@@ -117,7 +109,7 @@ public class creacionBaseDatos extends HttpServlet {
             processRequestPOST(request, response);
 
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(creacionBaseDatos.class
+            Logger.getLogger(CreateDB.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -132,28 +124,39 @@ public class creacionBaseDatos extends HttpServlet {
         try {
             Connection con = DriverManager.getConnection(protocolo + baseAdmin, usuarioAdmin, passwordAdmin);
 
+            // Obtaining user ID
             Statement query = con.createStatement();
-            ResultSet rs = query.executeQuery("SELECT ID_USER FROM USUARIOS WHERE USERNAME='" + usuario + "'");
-            rs.next();
-            int id = rs.getInt("ID_USER");
-
-            if (id != -1) {
-
-                query = con.createStatement();
-
-                query.executeUpdate("INSERT INTO BASES (USERID,DBNAME) VALUES (" + id + ",'" + nombreBD + "')");
-                con.close();
-                return "exito";
-            } else {
-                throw new SQLException("No existe el usuario o hubo un error al obtener el id de " + usuario);
+            ResultSet rs = query.executeQuery("SELECT ID_USER FROM USERS WHERE USERNAME='" + usuario + "'");
+            
+            if(rs.next()){
+                int id = rs.getInt("ID_USER");
+                
+                if (id != -1) { // Valid user, registered user
+                    
+                    // Checking that the new DB name doesn't already exists for the user
+                    query = con.createStatement();
+                    rs = query.executeQuery("SELECT * FROM DATABASES WHERE USERID =" + id +
+                                            " AND DBNAME = '"+ nombreBD +"'");
+                    
+                    if (!rs.next()) {   // DB name is not registered yet
+                        query = con.createStatement();
+                        query.executeUpdate("INSERT INTO DATABASES(USERID,DBNAME) VALUES (" + id + ",'" + nombreBD + "')");
+                        con.close();
+                        return "exito";
+                    } else {    // DB name already registered
+                        return "Database name already registered. Choose another one.";
+                    }
+                } else {    // User error, invalid user
+                    throw new SQLException("invalid user or user error with ID " + usuario);
+                }
             }
+            return "Failure.";
 
         } catch (SQLException ex) {
-            Logger.getLogger(creacionBaseDatos.class
+            Logger.getLogger(CreateDB.class
                     .getName()).log(Level.SEVERE, null, ex);
             return ex.toString();
         }
-
     }
 
     private void processRequestGET(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

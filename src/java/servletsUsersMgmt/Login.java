@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servletsUsersMgmt;
 
 import java.io.IOException;
@@ -26,7 +21,7 @@ import javax.servlet.http.HttpSession;
  * @author miguelcasillas
  */
 public class Login extends HttpServlet {
-
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -47,11 +42,11 @@ public class Login extends HttpServlet {
                 Statement query = con.createStatement();
                 String username = request.getParameter("usuario");
                 String password = request.getParameter("password");
-                ResultSet rs = query.executeQuery("SELECT * FROM USUARIOS WHERE USERNAME = '" + username + "' and PASSWORD='" + password + "'");
+                ResultSet rs = query.executeQuery("SELECT * FROM USERS WHERE USERNAME = '" + username + "' and PASSWORD='" + password + "'");
                 if (rs.next()) {
                     HttpSession mySession = request.getSession();
                     mySession.setAttribute("usuario", username);
-                    response.sendRedirect("crearBaseDatos.jsp");
+                    response.sendRedirect("welcome.jsp");
                 } else {
                     request.setAttribute("loginSuccess","NO");
                     String next = "/index.jsp";

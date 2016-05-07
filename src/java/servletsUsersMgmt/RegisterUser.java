@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servletsUsersMgmt;
 
 import java.io.IOException;
@@ -41,22 +36,21 @@ public class RegisterUser extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             try {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
-                //Esta base de datos tiene que estar creada previamente en el servidor
+                //This database must be created before running the project
                 Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/AdminUsuarios", "administrador", "administrador");
                 Statement query = con.createStatement();
                 String username = request.getParameter("usuario");
                 String password = request.getParameter("password");
-                ResultSet rs = query.executeQuery("SELECT * FROM USUARIOS WHERE USERNAME = '" + username + "'");
+                ResultSet rs = query.executeQuery("SELECT * FROM USERS WHERE USERNAME = '" + username + "'");
                 String next = "";
                 if (!rs.next()) {
                     request.setAttribute("fromRegisterUser", (Object)"YES");
-                    out.print("Usuario válido");
-                    query.executeUpdate("INSERT INTO USUARIOS(USERNAME,PASSWORD) VALUES('" + username + "','" + password + "')");
+                    out.print("User registered correctly.");
+                    query.executeUpdate("INSERT INTO USERS(USERNAME,PASSWORD) VALUES('" + username + "','" + password + "')");
                     
                     next = "/index.jsp";
                 } else {
                     request.setAttribute("fromRegisterUser", (Object)"NO");
-                    out.print("Usuario no válido");
                     next = "/signup.jsp";
                 }
                 RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher(next);
