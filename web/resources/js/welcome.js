@@ -20,12 +20,22 @@ function checkUserDB(id,username,target) {
     ajaxRequest.send();
 }
 
+function addCreateTableOptions(divID){
+    var createOptions = "<h4>Create new table</h4>";
+    document.getElementById(divID).innerHTML = createOptions;
+}
+
+function addModifyTableOptions(divID){
+    var createOptions = "<h4>Modify Table</h4>";
+    document.getElementById(divID).innerHTML = createOptions;
+}
+
 function clickAdministrate(divID){
     //alert('click en '+divID);
-    var opciones = "<button type='button'class=\"btn btn-default btn-sm\">"
+    var options = "<button type='button'class=\"btn btn-default btn-sm\" onclick='addCreateTableOptions(\"options"+divID+"\")'>"
                    +"<span class=\"glyphicon glyphicon-file\" aria-hidden=\"true\">Create Table</span>"
-                   +"</button><button type='button'class=\"btn btn-default btn-sm\">"
+                   +"</button><button type='button'class=\"btn btn-default btn-sm\" onclick='addModifyTableOptions(\"options"+divID+"\")'>"
                    +"<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\">Modify Tables</span>"
-                   +"</button>"+ "</div>";
-    document.getElementById(divID).innerHTML = opciones;
+                   +"</button><div id='options"+divID+"'></div>";
+    document.getElementById(divID).innerHTML = options;
 }
