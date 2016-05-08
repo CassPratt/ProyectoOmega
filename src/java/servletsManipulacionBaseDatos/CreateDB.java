@@ -76,16 +76,15 @@ public class CreateDB extends HttpServlet {
 
             if (resultado.equals("The database with name " + nombreBD + " was created successfully.")) {
 
-                out.println("     <form action=\"CreateTables\">\n"
-                        + "    <input type=\"submit\" value=\"Create tables\">\n"
+                out.println("<form action=\"CreateTables\">\n"
+                        + "<input type=\"submit\" value=\"Create tables\">\n"
                         + "</form>\n"
-                        + "        \n"
-                        + "               <form action=\"welcome.jsp\">\n"
-                        + "    <input type=\"submit\" value=\"Go to dashboard\">\n"
-                        + "</form>");
+                        + "<form action=\"welcome.jsp\">\n"
+                        + "<input type=\"submit\" value=\"Go to dashboard\">\n"
+                        + "</form>\n");
             } else {
-                out.println("    <form action=\"welcome.jsp\">\n"
-                        + "    <input type=\"submit\" value=\"Go to dashboard\">\n"
+                out.println("<form action=\"welcome.jsp\">\n"
+                        + "<input type=\"submit\" value=\"Go to dashboard\">\n"
                         + "</form>");
 
             }

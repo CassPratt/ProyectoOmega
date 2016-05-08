@@ -9,6 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="resources/bootstrap-3.3.6-dist/css/bootstrap.css" rel="stylesheet">
         <title>Sign Up DWW</title>
     </head>
     <body>
@@ -30,8 +31,8 @@
             Username: <input type="text" name="usuario" value="" required="required"/><br>
             Password: <input type="password" name="password" value="" required="required"/><br>
             Confirm Password: <input type="password" name="password2" value="" required="required"/><br>
-            <input type="reset" value="Clear" />
-            <input type="submit" value="Register" />
+            <input type="reset" value="Clear" class="btn btn-default"/>
+            <input type="submit" value="Register" class="btn btn-default"/>
         </form>
     </body>
 </html>
