@@ -42,24 +42,28 @@ public class ShowUserDB extends HttpServlet {
         if (rs.next()) { // Double check for user existence in USERS table
             int id = rs.getInt("ID_USER");
             query = conAdmin.createStatement();
-            ResultSet bases = query.executeQuery("SELECT * FROM DATABASES WHERE USERID=" + id);
+            ResultSet bases = query.executeQuery("SELECT * FROM DATABASES WHERE USERID=" + id+" ORDER BY DBNAME");
 
             // Check if user has registered databases
             if (bases.next()) { // The user has registered DBs
                 StringBuilder builder = new StringBuilder();
                 try {
-                    builder.append("<select>");
+                    builder.append("<div id='databasesList' class='list-group'>");
                     
                     // Creating the drop down list object with the DBs names
-                    String dbName = bases.getString("DBNAME");
-                    builder.append("<option value='" + dbName + 
-                            "'>" + dbName + "</option>");
+                    String dbName;
+                    //builder.append("<div class='list-group-item'>" + dbName + "</div>");
                     while(bases.next()){
                         dbName = bases.getString("DBNAME");
-                        builder.append("<option value='" + dbName + 
-                            "'>" + dbName + "</option>");
+                        builder.append("<div id='div"+dbName+"' class='list-group-item'>" + 
+                                "<label>"+ dbName +"</label>  "+
+                                "<button type='button' onclick='clickAdministrate(\"options"+dbName+"\")' class=\"btn btn-default btn-xs\">"
+                                +"<span class=\"glyphicon glyphicon-triangle-bottom\" aria-hidden=\"true\"></span>"
+                                + "</button>"
+                                +"<div id='options"+dbName+"'></div>"
+                                + "</div>");
                     }
-                    builder.append("</select>");
+                    builder.append("</div><br>");
 
                 } catch (SQLException ex) {
                     Logger.getLogger(CreateDB.class
@@ -68,10 +72,8 @@ public class ShowUserDB extends HttpServlet {
                 
                 // Printing the user DBs
                 String selectBases = builder.toString();
-                out.println("<h2>...or administrate an existing one</h2>");
-                out.println("<form action=\"AdminDB\">"
-                        + selectBases + " <input type=\"submit\" value=\"Administrate\">"
-                        + "</form>");
+                out.println("<h2>Administrate your Databases</h2>");
+                out.println("<form action=\"AdminDB\">"+ selectBases +"</form>");
                 
             } else { // The user doesn't have registered DBs
                 out.println("<h3>You don't have any registered databases yet.</h3>");
