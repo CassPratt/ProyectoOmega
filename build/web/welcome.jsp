@@ -12,8 +12,9 @@
         <title>Dashboard DWW</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script type="text/javascript" src="resources/js/welcome.js"></script>
         <link href="resources/bootstrap-3.3.6-dist/css/bootstrap.css" rel="stylesheet">
+        <script type="text/javascript" src="resources/js/jquery-1.12.3.min.js"></script>
+        <script type="text/javascript" src="resources/js/welcome.js"></script>
     </head>
 
     <body>

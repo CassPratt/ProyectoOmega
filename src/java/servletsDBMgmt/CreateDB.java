@@ -1,4 +1,4 @@
-package servletsManipulacionBaseDatos;
+package servletsDBMgmt;
 
 import java.io.IOException;
 import java.io.PrintWriter;

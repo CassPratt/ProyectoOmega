@@ -1,4 +1,4 @@
-package servletsManipulacionBaseDatos;
+package servletsDBMgmt;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -25,8 +25,28 @@ public class ShowUserDB extends HttpServlet {
     private final String baseAdmin = "AdminUsuarios";
     private final String usuarioAdmin = "administrador";
     private final String passwordAdmin = "administrador";
+    
+    // Method called for printing the new elements on welcome.jsp page
+    // Bootstrap classes are used in order to make administration buttons appear
+    private String createOptionsDiv(String dbName){
+        String res = "<div id='options"+dbName+"' class='optionsDB'>";
+        res +=  "<form action='createTable.jsp' method='POST'>"
+                +"<input type='hidden' name='dbName' value='"+dbName+"'>"
+                +"<button id='create"+dbName+"' type='submit' class=\"btnCreate btn btn-default btn-sm\">"
+                +"<span class=\"glyphicon glyphicon-file\" aria-hidden=\"true\">Create Table</span>"
+                +"</button>"
+                +"</form>"
+                +"<form action='modifyTables.jsp' method='POST'>"
+                +"<input type='hidden' name='dbName' value='"+dbName+"'>"
+                +"<button id='modify"+dbName+"' type='submit' class=\"btnModify btn btn-default btn-sm\">"
+                +"<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\">Modify Tables</span>"
+                +"</button>"
+                +"</form>"
+                +"</div>";
+        return res;
+    }
 
-    protected void processRequestGET(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         try (PrintWriter out = response.getWriter()) {
 
@@ -51,17 +71,19 @@ public class ShowUserDB extends HttpServlet {
                     builder.append("<div id='databasesList' class='list-group'>");
                     
                     // Creating the drop down list object with the DBs names
-                    String dbName;
-                    //builder.append("<div class='list-group-item'>" + dbName + "</div>");
-                    while(bases.next()){
-                        dbName = bases.getString("DBNAME");
-                        builder.append("<div id='div"+dbName+"' class='list-group-item'>" + 
-                                "<label>"+ dbName +"</label>  "+
-                                "<button type='button' onclick='clickAdministrate(\"options"+dbName+"\")' class=\"btn btn-default btn-xs\">"
+                    String dbName = bases.getString("DBNAME");
+                    builder.append("<div id='div"+dbName+"' class='list-group-item'><label>"+ dbName +"</label>  "+
+                                "<button id='btn"+dbName+"' type='button' class=\"btnOptions btn btn-default btn-xs\">"
                                 +"<span class=\"glyphicon glyphicon-triangle-bottom\" aria-hidden=\"true\"></span>"
                                 + "</button>"
-                                +"<div id='options"+dbName+"'></div>"
-                                + "</div>");
+                                +createOptionsDiv(dbName) + "</div>");
+                    while(bases.next()){
+                        dbName = bases.getString("DBNAME");
+                        builder.append("<div id='div"+dbName+"' class='list-group-item'><label>"+ dbName +"</label>  "+
+                                "<button id='btn"+dbName+"' type='button' class=\"btnOptions btn btn-default btn-xs\">"
+                                +"<span class=\"glyphicon glyphicon-triangle-bottom\" aria-hidden=\"true\"></span>"
+                                + "</button>"
+                                +createOptionsDiv(dbName) + "</div>");
                     }
                     builder.append("</div><br>");
 
@@ -73,7 +95,7 @@ public class ShowUserDB extends HttpServlet {
                 // Printing the user DBs
                 String selectBases = builder.toString();
                 out.println("<h2>Administrate your Databases</h2>");
-                out.println("<form action=\"AdminDB\">"+ selectBases +"</form>");
+                out.println(selectBases);
                 
             } else { // The user doesn't have registered DBs
                 out.println("<h3>You don't have any registered databases yet.</h3>");
@@ -94,7 +116,7 @@ public class ShowUserDB extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            processRequestGET(request, response);
+            processRequest(request, response);
         } catch (SQLException ex) {
             Logger.getLogger(ShowUserDB.class.getName()).log(Level.SEVERE, null, ex);
         }

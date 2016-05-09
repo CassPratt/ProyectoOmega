@@ -10,7 +10,7 @@
     </servlet>
     <servlet>
         <servlet-name>creacionBaseDatos</servlet-name>
-        <servlet-class>servletsManipulacionBaseDatos.CreateDB</servlet-class>
+        <servlet-class>servletsDBMgmt.CreateDB</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>creacionTablas</servlet-name>
@@ -18,11 +18,15 @@
     </servlet>
     <servlet>
         <servlet-name>ShowUserDB</servlet-name>
-        <servlet-class>servletsManipulacionBaseDatos.ShowUserDB</servlet-class>
+        <servlet-class>servletsDBMgmt.ShowUserDB</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CreateDB</servlet-name>
-        <servlet-class>servletsManipulacionBaseDatos.CreateDB</servlet-class>
+        <servlet-class>servletsDBMgmt.CreateDB</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateTable</servlet-name>
+        <servlet-class>sevletsTablesMgmt.CreateTable</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
@@ -47,6 +51,10 @@
     <servlet-mapping>
         <servlet-name>CreateDB</servlet-name>
         <url-pattern>/CreateDB</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateTable</servlet-name>
+        <url-pattern>/CreateTable</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
