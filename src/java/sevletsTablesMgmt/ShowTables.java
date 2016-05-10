@@ -1,26 +1,30 @@
 /*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package sevletsTablesMgmt;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author CassPratt
+ * @author miguelcasillas
  */
-public class CreateTable extends HttpServlet {
+public class ShowTables extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,54 +39,45 @@ public class CreateTable extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            
-            // Get the new table data
-            String tableName = request.getParameter("tableName");
-            String dbName = (String)request.getSession().getAttribute("dbName");
-            
-            // Get the user data
-            String username = request.getParameter("username");
-            String password = request.getParameter("password");
-            
-            // Array of fields' names
-            ArrayList<String> names = new ArrayList();
-            // Array of types' names
-            ArrayList<String> types = new ArrayList();
-            // Fill the arrays with the values on createTable.jsp
-            int cont = 1;
-            String name = request.getParameter("nameField"+cont);
-            String type = request.getParameter("typeField"+cont);
-            while(name!=null){
-                names.add(name); types.add(type);
-                cont++;
-                name = request.getParameter("nameField"+cont);
-                type = request.getParameter("typeField"+cont);
-            }
-            
-            // Connect to the user database and create the table
+            HttpSession mySession = request.getSession();
+            String username = (String)mySession.getAttribute("usuario");
+            String password = (String)mySession.getAttribute("password");
+            String dbName = request.getParameter("dbName");
+            StringBuilder builder = new StringBuilder();
             try {
-                // Stablish connection
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName+";create=true;",username,password);
-                Statement create = con.createStatement();
-                String queryString = "create table "+tableName+" (";
-                for(int i=0;i<names.size();i++){
-                    queryString += names.get(i)+" "+types.get(i)+", ";
+                DatabaseMetaData meta = con.getMetaData();
+                ResultSet res = meta.getTables(null, null, null, new String[] {"TABLE"});
+                if(res.next()){
+                    String tableName = res.getString("TABLE_NAME");
+                    builder.append("<div id='tablesList' class='list-group'>");
+                    builder.append("<div id='div"+tableName+"' class='list-group-item'>"+
+                                "<button id='btn"+tableName+"' type='button' class=\"btnOptions btn btn-default btn-xs\">"
+                                +"<span class=\"glyphicon glyphicon-triangle-bottom\" aria-hidden=\"true\"></span>"
+                                +"</button><label> "+ tableName +"</label>"
+                                +"</div>");
+                    while(res.next()){
+                        tableName = res.getString("TABLE_NAME");
+                        builder.append("<div id='div"+tableName+"' class='list-group-item'>"+
+                                    "<button id='btn"+tableName+"' type='button' class=\"btnOptions btn btn-default btn-xs\">"
+                                    +"<span class=\"glyphicon glyphicon-triangle-bottom\" aria-hidden=\"true\"></span>"
+                                    +"</button><label> "+ tableName +"</label>"
+                                    +"</div>");
+                    }
+                    builder.append("</div><br>");
+                    res.close();
+                }else{
+                    builder.append("<h3>This database has no tables</h3>");
                 }
-                // First field in createTable.jsp is the primary key
-                queryString += "primary key("+names.get(0)+"))";    
-                create.executeUpdate(queryString);
-                out.println("Se creó la tabla exitosamente!");
                 con.close();
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(CreateTable.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ShowTables.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
-                Logger.getLogger(CreateTable.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ShowTables.class.getName()).log(Level.SEVERE, null, ex);
             }
-            // Check data of new table
-            out.println("Table: "+tableName);
-            out.println("Names: "+names.toString());
-            out.println("Types: "+types.toString());
+            String tables = builder.toString();
+            out.println(tables);
         }
     }
 

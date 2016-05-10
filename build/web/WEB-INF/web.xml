@@ -28,6 +28,10 @@
         <servlet-name>CreateTable</servlet-name>
         <servlet-class>sevletsTablesMgmt.CreateTable</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ShowTables</servlet-name>
+        <servlet-class>sevletsTablesMgmt.ShowTables</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/Login</url-pattern>
@@ -55,6 +59,10 @@
     <servlet-mapping>
         <servlet-name>CreateTable</servlet-name>
         <url-pattern>/CreateTable</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ShowTables</servlet-name>
+        <url-pattern>/ShowTables</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

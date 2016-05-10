@@ -46,6 +46,7 @@ public class Login extends HttpServlet {
                 if (rs.next()) {
                     HttpSession mySession = request.getSession();
                     mySession.setAttribute("usuario", username);
+                    mySession.setAttribute("password",password);
                     response.sendRedirect("welcome.jsp");
                 } else {
                     request.setAttribute("loginSuccess","NO");

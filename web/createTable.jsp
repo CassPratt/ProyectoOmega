@@ -10,7 +10,6 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="resources/bootstrap-3.3.6-dist/css/bootstrap.css" rel="stylesheet">
-        <script type="text/javascript" src="resources/js/jquery-1.12.3.min.js"></script>
         <script type="text/javascript" src="resources/js/createTable.js"></script>
         <title>Create Table</title>
     </head>
@@ -31,10 +30,10 @@
             mySession.setAttribute("dbName", dbName);
         %>
         
-        <h3>Create new table on <%=dbName%></h3>
+        <h2>Create new table on <%=dbName%></h2>
         <form id="formCreate" action="CreateTable" method="POST">
             <!-------------- USERNAME AND PASSWORD ARE REQUIRED -------------->
-            <label>Username:</label><input type="text" name="username" value="" required="required"/><br>
+            <label>Username:</label><input type="text" name="usuario" value="" required="required"/><br>
             <label>Password</label><input type="password" name="password" value="" required="required"/><br><br>
             
             <!-------------- EDIT FIELDS BUTTONS -------------->
@@ -44,17 +43,18 @@
             <input type="submit" value="Create Table"/><br><br>
             
             <h4>The first field will be the primary key.</h4><br>
-            
-             <!-------------- FIELDS OF THE NEW TABLE -------------->
-            <label>Table Name:</label><input type="text" name="tableName" value="" required="required"/><br>
-            <label class="field" id="labelValue1">Field Name: </label><input id="nameField1" type="text" name="nameField1" value="" required="required"/> 
-            <label id="labelType1">Type: </label><select id="typeField1" name="typeField1">
-                <option>VARCHAR(20)</option>
-                <option>INT</option>
-                <option>DOUBLE</option>
-                <option>CHAR</option>
-                <option>BOOLEAN</option>
-            </select>
+            <div id="row1" class="field">
+               <!-------------- FIELDS OF THE NEW TABLE -------------->
+               <label>Table Name:</label><input type="text" name="tableName" value="" required="required"/><br>
+               <label id="labelValue1">Field Name: </label><input id="nameField1" type="text" name="nameField1" value="" required="required"/> 
+               <label id="labelType1">Type: </label><select id="typeField1" name="typeField1">
+                   <option>VARCHAR(20)</option>
+                   <option>INT</option>
+                   <option>DOUBLE</option>
+                   <option>CHAR</option>
+                   <option>BOOLEAN</option>
+               </select>
+            </div>
         </form>
         
     </body>

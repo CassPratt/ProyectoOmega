@@ -1,4 +1,8 @@
-
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 // Giving style from the beginning
 function init(){
     var opDB = document.querySelectorAll(".optionsDB");
@@ -21,8 +25,8 @@ function init(){
     }
 }
 
-// AJAX function called for showing the user databases
-function checkUserDB(id,username,target) {
+// AJAX function called for showing the databases from a table
+function showDBTables(id,username,servlet,dbName) {
     var ajaxRequest;
     if (window.XMLHttpRequest){
         ajaxRequest=new XMLHttpRequest(); // IE7+, Firefox, Chrome, Opera, Safari
@@ -34,9 +38,9 @@ function checkUserDB(id,username,target) {
             document.getElementById(id).innerHTML=ajaxRequest.responseText;
             //Cuando se acaba de ejecutar el AJAX se tienen todos los componentes
             //y se agregan los listeners
-            init();
+            //init();
         }
     };
-    ajaxRequest.open("GET", target+"?="+username, true /*async*/);
+    ajaxRequest.open("GET", servlet+"?username="+username+"&dbName="+dbName, true /*async*/);
     ajaxRequest.send();
 }

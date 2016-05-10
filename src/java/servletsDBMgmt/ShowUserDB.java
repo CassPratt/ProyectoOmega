@@ -72,17 +72,17 @@ public class ShowUserDB extends HttpServlet {
                     
                     // Creating the drop down list object with the DBs names
                     String dbName = bases.getString("DBNAME");
-                    builder.append("<div id='div"+dbName+"' class='list-group-item'><label>"+ dbName +"</label>  "+
+                    builder.append("<div id='div"+dbName+"' class='list-group-item'>"+
                                 "<button id='btn"+dbName+"' type='button' class=\"btnOptions btn btn-default btn-xs\">"
                                 +"<span class=\"glyphicon glyphicon-triangle-bottom\" aria-hidden=\"true\"></span>"
-                                + "</button>"
+                                +"</button><label> "+ dbName +"</label>"
                                 +createOptionsDiv(dbName) + "</div>");
                     while(bases.next()){
                         dbName = bases.getString("DBNAME");
-                        builder.append("<div id='div"+dbName+"' class='list-group-item'><label>"+ dbName +"</label>  "+
+                        builder.append("<div id='div"+dbName+"' class='list-group-item'>"+
                                 "<button id='btn"+dbName+"' type='button' class=\"btnOptions btn btn-default btn-xs\">"
                                 +"<span class=\"glyphicon glyphicon-triangle-bottom\" aria-hidden=\"true\"></span>"
-                                + "</button>"
+                                +"</button><label> "+ dbName +"</label>"
                                 +createOptionsDiv(dbName) + "</div>");
                     }
                     builder.append("</div><br>");

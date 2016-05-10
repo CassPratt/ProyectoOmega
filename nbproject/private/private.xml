@@ -3,9 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/resources/js/modifyTables.js</file>
             <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/index.jsp</file>
+            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/createTable.jsp</file>
+            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/resources/js/createTable.js</file>
+            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/signup.jsp</file>
+            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/resources/js/welcome.js</file>
             <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/welcome.jsp</file>
-            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/src/java/servletsManipulacionBaseDatos/CreateDB.java</file>
+            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/modifyTables.jsp</file>
         </group>
     </open-files>
 </project-private>

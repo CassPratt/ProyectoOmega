@@ -28,7 +28,7 @@
         
         <!---------------- REGISTER USER FORM ---------------->
         <form action="RegisterUser" method="POST">
-            Username: <input type="text" name="usuario" value="" required="required"/><br>
+            Username: <input type="text" name="username" value="" required="required"/><br>
             Password: <input type="password" name="password" value="" required="required"/><br>
             Confirm Password: <input type="password" name="password2" value="" required="required"/><br>
             <input type="reset" value="Clear" class="btn btn-default"/>
