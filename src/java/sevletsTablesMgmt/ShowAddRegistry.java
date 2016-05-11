@@ -11,7 +11,10 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -24,7 +27,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author miguelcasillas
  */
-public class ShowTables extends HttpServlet {
+public class ShowAddRegistry extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,49 +46,30 @@ public class ShowTables extends HttpServlet {
             String username = (String)mySession.getAttribute("usuario");
             String password = (String)mySession.getAttribute("password");
             String dbName = request.getParameter("dbName");
-            StringBuilder builder = new StringBuilder();
+            String tableName = request.getParameter("tableName");
+            out.println(dbName+" "+tableName);
             try {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
-                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName+";create=true;",username,password);
-                DatabaseMetaData meta = con.getMetaData();
-                ResultSet res = meta.getTables(null, null, null, new String[] {"TABLE"});
-                if(res.next()){
-                    String tableName = res.getString("TABLE_NAME");
-                    builder.append("<div id='tablesList' class='list-group'>");
-                    builder.append("<div id='div"+tableName+"' class='list-group-item'>"
-                                +"<form action='editTable.jsp' method='POST'>"
-                                +"<input type='hidden' name='dbName' value='"+dbName+"'>"
-                                +"<input type='hidden' name='tableName' value='"+tableName+"'>"
-                                +"<button id='btn"+tableName+"' type='submit' class=\"btnEditTable btn btn-default btn-xs\">"
-                                +"<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\">Edit Table</span>"
-                                +"</button><label> "+ tableName +"</label>"
-                                +"</form>"
-                                +"</div>");
-                    while(res.next()){
-                        tableName = res.getString("TABLE_NAME");
-                        builder.append("<div id='div"+tableName+"' class='list-group-item'>"
-                                    +"<form action='editTable.jsp' method='POST'>"
-                                    +"<input type='hidden' name='dbName' value='"+dbName+"'>"
-                                    +"<input type='hidden' name='tableName' value='"+tableName+"'>"
-                                    +"<button id='btn"+tableName+"' type='submit' class=\"btnEditTable btn btn-default btn-xs\">"
-                                    +"<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\">Edit Table</span>"
-                                    +"</button><label> "+ tableName +"</label>"
-                                    +"</form>"
-                                    +"</div>");
-                    }
-                    builder.append("</div><br>");
-                    res.close();
-                }else{
-                    builder.append("<h3>This database has no tables</h3>");
+                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName,username,password);
+                Statement query = con.createStatement();
+                ResultSet rs = query.executeQuery("SELECT * FROM "+tableName);
+                ResultSetMetaData rsmd = rs.getMetaData();
+                ArrayList<String> columnNames = new ArrayList();
+                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                    columnNames.add(rsmd.getColumnName(i));
                 }
-                con.close();
+                for(int i=0;i<columnNames.size();i++){
+                    out.println(columnNames.get(i)+"<br>");
+                }
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(ShowTables.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ShowAddRegistry.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
-                Logger.getLogger(ShowTables.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ShowAddRegistry.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String tables = builder.toString();
-            out.println(tables);
+            String form = "<form action='' method='POST'>";
+            form += "</form>";
+            out.println(form);
+            
         }
     }
 

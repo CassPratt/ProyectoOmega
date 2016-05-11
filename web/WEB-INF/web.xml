@@ -32,6 +32,14 @@
         <servlet-name>ShowTables</servlet-name>
         <servlet-class>sevletsTablesMgmt.ShowTables</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ShowTableData</servlet-name>
+        <servlet-class>sevletsTablesMgmt.ShowTableData</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ShowAddRegistry</servlet-name>
+        <servlet-class>sevletsTablesMgmt.ShowAddRegistry</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/Login</url-pattern>
@@ -63,6 +71,14 @@
     <servlet-mapping>
         <servlet-name>ShowTables</servlet-name>
         <url-pattern>/ShowTables</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ShowTableData</servlet-name>
+        <url-pattern>/ShowTableData</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ShowAddRegistry</servlet-name>
+        <url-pattern>/ShowAddRegistry</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

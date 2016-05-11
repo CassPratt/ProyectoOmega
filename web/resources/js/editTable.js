@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 // AJAX function called for showing the databases from a table
-function showDBTables(id,username,servlet,dbName) {
+function setDivContent(divID,username,servlet,dbName,tableName) {
     var ajaxRequest;
     if (window.XMLHttpRequest){
         ajaxRequest=new XMLHttpRequest(); // IE7+, Firefox, Chrome, Opera, Safari
@@ -13,12 +14,12 @@ function showDBTables(id,username,servlet,dbName) {
     }
     ajaxRequest.onreadystatechange = function(){
         if (ajaxRequest.readyState===4 && ajaxRequest.status===200){
-            document.getElementById(id).innerHTML=ajaxRequest.responseText;
+            document.getElementById(divID).innerHTML=ajaxRequest.responseText;
             //Cuando se acaba de ejecutar el AJAX se tienen todos los componentes
             //y se agregan los listeners
             //init();
         }
     };
-    ajaxRequest.open("GET", servlet+"?username="+username+"&dbName="+dbName, true /*async*/);
+    ajaxRequest.open("GET", servlet+"?username="+username+"&dbName="+dbName+"&tableName="+tableName, true /*async*/);
     ajaxRequest.send();
 }

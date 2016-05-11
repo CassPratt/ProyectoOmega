@@ -49,7 +49,7 @@ public class CreateDB extends HttpServlet {
             String resultadoRegistro = registrarBD((String) session.getAttribute("usuario"), nombreBD);
             if (resultadoRegistro.equals("exito")) {
                 //The paremeter "create=true" creates the DB with the indicated properties
-                Connection conexion = DriverManager.getConnection(protocolo + nombreBD + ";create=true", propiedades);
+                Connection conexion = DriverManager.getConnection(protocolo + nombreBD + ";create=true",usuario,password);
                 resultado = "The database with name " + nombreBD + " was created successfully.";
                 conexion.close();
 
