@@ -38,7 +38,9 @@
         %>
         <br><div id="scrollTable"></div>
         <br><br><div id='addRegistry'></div>
-        <br><br><form action='' method='POST'>
+        <br><br><h3>Delete a Registry</h3>
+        <h4>The ID is the first column on the table</h4>
+        <form action='DeleteRegistry' method='POST'>
             <input type='hidden' name='dbName' value='<%=dbName%>'>
             <input type='hidden' name='tableName' value='<%=tableName%>'>
             <table border="2">

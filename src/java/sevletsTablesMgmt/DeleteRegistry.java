@@ -1,12 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package sevletsTablesMgmt;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author miguelcasillas
  */
-public class ShowAddRegistry extends HttpServlet {
+public class DeleteRegistry extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,42 +44,38 @@ public class ShowAddRegistry extends HttpServlet {
             String password = (String)mySession.getAttribute("password");
             String dbName = request.getParameter("dbName");
             String tableName = request.getParameter("tableName");
-            StringBuilder builder = new StringBuilder();
-            builder.append("<h3>Add a new Registry</h3>");
-            builder.append("<form action='AddRegistry' method='POST'>");
-            builder.append("<input type='hidden' name='dbName' value='").append(dbName).append("'>");
-            builder.append("<input type='hidden' name='tableName' value='").append(tableName).append("'>");
-            builder.append("<table border='2'><thead><tr>");
+            String id = request.getParameter("id");
+            ArrayList<String> columnNames = (ArrayList<String>)mySession.getAttribute("columnNames");
             try {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName,username,password);
                 Statement query = con.createStatement();
-                ResultSet rs = query.executeQuery("SELECT * FROM "+tableName);
-                ResultSetMetaData rsmd = rs.getMetaData();
-                ArrayList<String> columnNames = new ArrayList();
-                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                    columnNames.add(rsmd.getColumnName(i));
+                String delete = "DELETE FROM "+tableName+" WHERE "+columnNames.get(0)+"=";
+                if(!isNumeric(id)){
+                    delete += "'"+id+"'";
+                }else{
+                    delete += id;
                 }
-                mySession.setAttribute("columnNames",columnNames);
-                for(int i=0;i<columnNames.size();i++){
-                    builder.append("<th>").append(columnNames.get(i)).append("</th>");
-                }
-                builder.append("<th>Insert</th>");
-                builder.append("</thead>");
-                builder.append("<tbody><tr>");
-                for(int i=0;i<columnNames.size();i++){
-                    builder.append("<td><input type='text' name='").append(columnNames.get(i)).append("' value='' required='required'/></td>");
-                }
-                builder.append("<td><input type='submit' value='Register' /></td>");
-                builder.append("</tr></tbody>");
+                out.println(delete+"<br>");
+                query.executeUpdate(delete);
+                con.close();
+                out.println("Success!");
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(ShowAddRegistry.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DeleteRegistry.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
-                Logger.getLogger(ShowAddRegistry.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DeleteRegistry.class.getName()).log(Level.SEVERE, null, ex);
+                out.println("Fail!");
             }
-            builder.append("</table></form>");
-            out.println(builder.toString());
         }
+    }
+    
+    private static boolean isNumeric(String str){
+        try{
+            double d = Double.parseDouble(str);
+        }catch(NumberFormatException e){
+            return false;
+        }
+        return true;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
