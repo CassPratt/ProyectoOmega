@@ -2,12 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/src/java/sevletsTablesMgmt/CreateTable.java</file>
-            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/src/java/servletsDBMgmt/CreateDB.java</file>
-            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/web/modifyTables.jsp</file>
-            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/src/java/servletsDBMgmt/ShowUserDB.java</file>
-            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/web/createTable.jsp</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

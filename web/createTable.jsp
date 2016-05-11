@@ -33,7 +33,7 @@
         <h2>Create new table on <%=dbName%></h2>
         <form id="formCreate" action="CreateTable" method="POST">
             <!-------------- USERNAME AND PASSWORD ARE REQUIRED -------------->
-            <label>Username:</label><input type="text" name="usuario" value="" required="required"/><br>
+            <label>Username:</label><input type="text" name="username" value="" required="required"/><br>
             <label>Password</label><input type="password" name="password" value="" required="required"/><br><br>
             
             <!-------------- EDIT FIELDS BUTTONS -------------->

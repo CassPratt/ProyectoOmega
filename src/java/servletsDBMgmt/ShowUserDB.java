@@ -53,7 +53,7 @@ public class ShowUserDB extends HttpServlet {
         HttpSession session = request.getSession();
         // Creating connection with the administrator database
         Connection conAdmin = DriverManager.getConnection(protocolo + baseAdmin, userAdmin, passwordAdmin);
-        String usuario = (String) session.getAttribute("username");
+        String usuario = (String)session.getAttribute("username");
 
         // Looking for user ID
         Statement query = conAdmin.createStatement();

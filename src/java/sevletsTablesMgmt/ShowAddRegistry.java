@@ -42,7 +42,11 @@ public class ShowAddRegistry extends HttpServlet {
             String password = (String)mySession.getAttribute("password");
             String dbName = request.getParameter("dbName");
             String tableName = request.getParameter("tableName");
-            out.println(dbName+" "+tableName);
+            StringBuilder builder = new StringBuilder();
+            builder.append("<form action='' method='POST'>");
+            builder.append("<input type='hidden' name='dbName' value='").append(dbName).append("'>");
+            builder.append("<input type='hidden' name='tableName' value='").append(tableName).append("'>");
+            builder.append("<table border='2'><thead><tr>");
             try {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName,username,password);
@@ -54,16 +58,23 @@ public class ShowAddRegistry extends HttpServlet {
                     columnNames.add(rsmd.getColumnName(i));
                 }
                 for(int i=0;i<columnNames.size();i++){
-                    out.println(columnNames.get(i)+"<br>");
+                    builder.append("<th>").append(columnNames.get(i)).append("</th>");
                 }
+                builder.append("<th>Insert</th>");
+                builder.append("</thead>");
+                builder.append("<tbody><tr>");
+                for(int i=0;i<columnNames.size();i++){
+                    builder.append("<td><input type='text' name='").append(columnNames.get(i)).append("' value='' required='required'/></td>");
+                }
+                builder.append("<td><input type='submit' value='Register' /></td>");
+                builder.append("</tr></tbody>");
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(ShowAddRegistry.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
                 Logger.getLogger(ShowAddRegistry.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String form = "<form action='' method='POST'>";
-            form += "</form>";
-            out.println(form);
+            builder.append("</table></form>");
+            out.println(builder.toString());
             
         }
     }
