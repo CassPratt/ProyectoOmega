@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sevletsTablesMgmt;
 
 import java.io.IOException;
@@ -43,7 +38,7 @@ public class ShowAddRegistry extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             HttpSession mySession = request.getSession();
-            String username = (String)mySession.getAttribute("usuario");
+            String username = (String)mySession.getAttribute("username");
             String password = (String)mySession.getAttribute("password");
             String dbName = request.getParameter("dbName");
             String tableName = request.getParameter("tableName");

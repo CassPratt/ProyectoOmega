@@ -21,16 +21,16 @@
                 out.println("<script type=\"text/javascript\">");
                 out.println("alert('Username already exists');");
                 out.println("</script>");
-            }
+            } 
             request.removeAttribute("fromRegisterUser");
         %>
         <h1>Create an account for free!</h1>
         
         <!---------------- REGISTER USER FORM ---------------->
         <form action="RegisterUser" method="POST">
-            Username: <input type="text" name="usuario" value="" required="required"/><br>
+            Username: <input type="text" name="username" value="" required="required"/><br>
             Password: <input type="password" name="password" value="" required="required"/><br>
-            Confirm Password: <input type="password" name="password2" value="" required="required"/><br>
+            Confirm Password: <input type="password" name="password2" value="" onkeyup="validatePassword()" required="required"/><br>
             <input type="reset" value="Clear" class="btn btn-default"/>
             <input type="submit" value="Register" class="btn btn-default"/>
         </form>

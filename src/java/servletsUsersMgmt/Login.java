@@ -38,14 +38,14 @@ public class Login extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             try {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
-                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/AdminUsuarios", "administrador", "administrador");
+                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsersAdmin", "dbAdmin", "dbAdmin");
                 Statement query = con.createStatement();
-                String username = request.getParameter("usuario");
+                String username = request.getParameter("username");
                 String password = request.getParameter("password");
                 ResultSet rs = query.executeQuery("SELECT * FROM USERS WHERE USERNAME = '" + username + "' and PASSWORD='" + password + "'");
                 if (rs.next()) {
                     HttpSession mySession = request.getSession();
-                    mySession.setAttribute("usuario", username);
+                    mySession.setAttribute("username", username);
                     mySession.setAttribute("password",password);
                     response.sendRedirect("welcome.jsp");
                 } else {
@@ -54,6 +54,7 @@ public class Login extends HttpServlet {
                     RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(next);
                     dispatcher.forward(request,response);
                 }
+                con.close();    // Closing UsersAdmin DB connection
             }
             catch (ClassNotFoundException ex) {
                 Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);

@@ -17,7 +17,7 @@
         <%
             // Checking if the user is logged in. If no, send to index.jsp
             HttpSession mySession = request.getSession();
-            String user = (String)mySession.getAttribute("usuario");
+            String user = (String)mySession.getAttribute("username");
             if(user==null){
                 request.setAttribute("isLogged", "NO");
                 String next = "/index.jsp";

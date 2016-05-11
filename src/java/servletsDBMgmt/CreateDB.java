@@ -25,72 +25,95 @@ import javax.servlet.http.HttpSession;
 public class CreateDB extends HttpServlet {
 
     private final String protocolo = "jdbc:derby://localhost:1527/";
-    private final String baseAdmin = "AdminUsuarios";
-    private final String usuarioAdmin = "administrador";
-    private final String passwordAdmin = "administrador";
-
-    protected void processRequestPOST(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException {
-        HttpSession session = request.getSession();
-        String resultado;
-        String nombreBD = request.getParameter("nombre");
-        String usuario = request.getParameter("usuario");
-
-        String password = request.getParameter("contrasenia");
-
-        Properties propiedades = new Properties();
-        //Creating parameters as properties for the DB
-        propiedades.put("user", usuario);
-        propiedades.put("password", password);
-        //Stablishing the DB name
+    private final String baseAdmin = "UsersAdmin";
+    private final String usuarioAdmin = "dbAdmin";
+    private final String passwordAdmin = "dbAdmin";
+    
+    public String registerBD(String _user, String _pass, String _dbName) throws ClassNotFoundException {
 
         try {
-            // Connecting and creating the DB
-            String resultadoRegistro = registrarBD((String) session.getAttribute("usuario"), nombreBD);
-            if (resultadoRegistro.equals("exito")) {
-                //The paremeter "create=true" creates the DB with the indicated properties
-                Connection conexion = DriverManager.getConnection(protocolo + nombreBD + ";create=true",usuario,password);
-                resultado = "The database with name " + nombreBD + " was created successfully.";
-                conexion.close();
+            Connection con = DriverManager.getConnection(protocolo + baseAdmin, usuarioAdmin, passwordAdmin);
 
+            // Obtaining user ID
+            Statement query = con.createStatement();
+            ResultSet rs = query.executeQuery("SELECT ID_USER FROM USERS WHERE USERNAME='" + _user + "'"
+                                    + " AND PASSWORD='" + _pass + "'");
+            
+            if(rs.next()){  // Valid user, registered user
+                int id = rs.getInt("ID_USER");
+                
+                if (id != -1) { 
+                    // Checking that the new DB name doesn't already exists for the user
+                    query = con.createStatement();
+                    rs = query.executeQuery("SELECT * FROM DATABASES WHERE USERID =" + id +
+                                            " AND DBNAME = '"+ _dbName +"'");
+                    
+                    if (!rs.next()) {   // DB name is not registered yet
+                        query = con.createStatement();
+                        query.executeUpdate("INSERT INTO DATABASES(USERID,DBNAME) VALUES (" + id + ",'" + _dbName + "')");
+                        con.close();
+                        return "Success";
+                    } else {    // DB name already registered
+                        return "Database name already registered. Choose another one.";
+                    }
+                } else {    // User error, invalid user
+                    throw new SQLException("invalid user or user error with ID " + _user);
+                }
             } else {
-                resultado = resultadoRegistro;
+                return "Wrong username or password.";
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(CreateDB.class
+                    .getName()).log(Level.SEVERE, null, ex);
+            return ex.toString();
+        }
+    }
+
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, ClassNotFoundException {
+        HttpSession session = request.getSession();
+        String result = "";
+        
+        // User parameters for DB creation
+        String dbName = request.getParameter("dbName");
+        String user = request.getParameter("username");
+        String password = request.getParameter("password");
+        
+        try {
+            // Check the user parameter from welcome.jsp and from session are the same
+            String resRegister = "";
+            if (user.equals((String) session.getAttribute("username")) ) {
+                resRegister = registerBD(user, password, dbName);
+                if (resRegister.equals("Success")) {
+                    //The paremeter "create=true" creates the DB with the indicated properties
+                    Connection con = DriverManager.getConnection(protocolo + dbName + ";create=true;",user,password);
+                    result = "The database with name " + dbName + " was created successfully.";
+                    con.close();    // Closing UsersAdmin DB connection
+
+                } else {
+                    result = resRegister;
+                }
             }
 
         } catch (SQLException ex) {
             Logger.getLogger(CreateDB.class.getName()).log(Level.SEVERE, null, ex);
             //Sending exception error
-            resultado = "The database with name " + nombreBD + " couldn't be created, error: " + ex.toString();
+            result = "The database with name " + dbName + " couldn't be created, error: " + ex.toString();
         }
 
-        //  Page for results of creating DB
-        // THIS CAN BE A .JSP FILE, NOT A MANUALLY PRINTED ONE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //  Redirect with DB creation result
         try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>DB created</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>" + resultado + "</h1>");
-
-            if (resultado.equals("The database with name " + nombreBD + " was created successfully.")) {
-
-                out.println("<form action=\"CreateTables\">\n"
-                        + "<input type=\"submit\" value=\"Create tables\">\n"
-                        + "</form>\n"
-                        + "<form action=\"welcome.jsp\">\n"
-                        + "<input type=\"submit\" value=\"Go to dashboard\">\n"
-                        + "</form>\n");
+            System.out.println(result);
+            if (result.equals("The database with name " + dbName + " was created successfully.")) {
+                request.setAttribute("fromCreateDB", (Object)"YES");
             } else {
-                out.println("<form action=\"welcome.jsp\">\n"
-                        + "<input type=\"submit\" value=\"Go to dashboard\">\n"
-                        + "</form>");
-
+                request.setAttribute("fromCreateDB", (Object)"NO");
             }
-            out.println("</body>");
-            out.println("</html>");
-            out.close();
+            // Redirect to welcome.jsp
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/welcome.jsp");
+            dispatcher.forward(request,response);
+            
         }
 
     }
@@ -98,14 +121,18 @@ public class CreateDB extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequestGET(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(CreateDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            processRequestPOST(request, response);
+            processRequest(request, response);
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(CreateDB.class
@@ -116,53 +143,6 @@ public class CreateDB extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }
-
-    public String registrarBD(String usuario, String nombreBD) throws ClassNotFoundException {
-
-        try {
-            Connection con = DriverManager.getConnection(protocolo + baseAdmin, usuarioAdmin, passwordAdmin);
-
-            // Obtaining user ID
-            Statement query = con.createStatement();
-            ResultSet rs = query.executeQuery("SELECT ID_USER FROM USERS WHERE USERNAME='" + usuario + "'");
-            
-            if(rs.next()){
-                int id = rs.getInt("ID_USER");
-                
-                if (id != -1) { // Valid user, registered user
-                    
-                    // Checking that the new DB name doesn't already exists for the user
-                    query = con.createStatement();
-                    rs = query.executeQuery("SELECT * FROM DATABASES WHERE USERID =" + id +
-                                            " AND DBNAME = '"+ nombreBD +"'");
-                    
-                    if (!rs.next()) {   // DB name is not registered yet
-                        query = con.createStatement();
-                        query.executeUpdate("INSERT INTO DATABASES(USERID,DBNAME) VALUES (" + id + ",'" + nombreBD + "')");
-                        con.close();
-                        return "exito";
-                    } else {    // DB name already registered
-                        return "Database name already registered. Choose another one.";
-                    }
-                } else {    // User error, invalid user
-                    throw new SQLException("invalid user or user error with ID " + usuario);
-                }
-            }
-            return "Failure.";
-
-        } catch (SQLException ex) {
-            Logger.getLogger(CreateDB.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            return ex.toString();
-        }
-    }
-
-    private void processRequestGET(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
-        ServletContext context = getServletContext();
-        RequestDispatcher rd = context.getRequestDispatcher("/creacionTablas");
-        rd.forward(request, response);
     }
 
 }

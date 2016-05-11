@@ -22,9 +22,9 @@ import javax.servlet.http.HttpSession;
 public class ShowUserDB extends HttpServlet {
 
     private final String protocolo = "jdbc:derby://localhost:1527/";
-    private final String baseAdmin = "AdminUsuarios";
-    private final String usuarioAdmin = "administrador";
-    private final String passwordAdmin = "administrador";
+    private final String baseAdmin = "UsersAdmin";
+    private final String userAdmin = "dbAdmin";
+    private final String passwordAdmin = "dbAdmin";
     
     // Method called for printing the new elements on welcome.jsp page
     // Bootstrap classes are used in order to make administration buttons appear
@@ -52,8 +52,8 @@ public class ShowUserDB extends HttpServlet {
 
         HttpSession session = request.getSession();
         // Creating connection with the administrator database
-        Connection conAdmin = DriverManager.getConnection(protocolo + baseAdmin, usuarioAdmin, passwordAdmin);
-        String usuario = (String) session.getAttribute("usuario");
+        Connection conAdmin = DriverManager.getConnection(protocolo + baseAdmin, userAdmin, passwordAdmin);
+        String usuario = (String) session.getAttribute("username");
 
         // Looking for user ID
         Statement query = conAdmin.createStatement();

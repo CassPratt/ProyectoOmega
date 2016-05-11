@@ -35,12 +35,16 @@ public class RegisterUser extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             try {
-                Class.forName("org.apache.derby.jdbc.ClientDriver");
-                //This database must be created before running the project
-                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/AdminUsuarios", "administrador", "administrador");
-                Statement query = con.createStatement();
-                String username = request.getParameter("usuario");
+                
+                String username = request.getParameter("username");
                 String password = request.getParameter("password");
+                String confirmPass = request.getParameter("password2");
+                
+                Class.forName("org.apache.derby.jdbc.ClientDriver");
+                //The admin database must be created before running the project
+                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/UsersAdmin", "dbAdmin", "dbAdmin");
+                Statement query = con.createStatement();
+                
                 ResultSet rs = query.executeQuery("SELECT * FROM USERS WHERE USERNAME = '" + username + "'");
                 String next = "";
                 if (!rs.next()) {
@@ -53,9 +57,9 @@ public class RegisterUser extends HttpServlet {
                     request.setAttribute("fromRegisterUser", (Object)"NO");
                     next = "/signup.jsp";
                 }
+                con.close();    // Closing UsersAdmin DB connection
                 RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher(next);
                 dispatcher.forward(request,response);
-                con.close();
             }
             catch (SQLException ex) {
                 Logger.getLogger(RegisterUser.class.getName()).log(Level.SEVERE, null, ex);

@@ -1,5 +1,3 @@
-/*
- */
 package sevletsTablesMgmt;
 
 import java.io.IOException;
@@ -11,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +62,7 @@ public class CreateTable extends HttpServlet {
             try {
                 // Stablish connection
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
-                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName+";create=true;",username,password);
+                Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName,username,password);
                 Statement create = con.createStatement();
                 String queryString = "create table "+tableName+" (";
                 for(int i=0;i<names.size();i++){
@@ -72,8 +71,8 @@ public class CreateTable extends HttpServlet {
                 // First field in createTable.jsp is the primary key
                 queryString += "primary key("+names.get(0)+"))";    
                 create.executeUpdate(queryString);
-                out.println("Se creó la tabla exitosamente!");
-                con.close();
+                out.println("Table created successfully!");
+                con.close();    // Connection closed
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(CreateTable.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {

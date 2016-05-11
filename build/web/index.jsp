@@ -49,7 +49,7 @@
         
         <!---------------- LOGIN FORM ---------------->
         <form action="Login" method="POST">
-            Username: <input type="text" name="usuario" value="" required="required" /> <br>
+            Username: <input type="text" name="username" value="" required="required" /> <br>
             Password: <input type="password" name="password" value="" required="required"/><br>
             <input type="submit" value="Login" class="btn btn-default"/>
         </form>

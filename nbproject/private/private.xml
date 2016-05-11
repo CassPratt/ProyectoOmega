@@ -3,14 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/editTable.jsp</file>
-            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/src/java/servletsUsersMgmt/Login.java</file>
-            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/src/java/servletsUsersMgmt/RegisterUser.java</file>
-            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/signup.jsp</file>
-            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/src/java/sevletsTablesMgmt/ShowAddRegistry.java</file>
-            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/src/java/sevletsTablesMgmt/ShowTables.java</file>
-            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/web/modifyTables.jsp</file>
-            <file>file:/Users/miguelcasillas/NetBeansProjects/ProyectoOmega/src/java/servletsDBMgmt/CreateDB.java</file>
+            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/src/java/sevletsTablesMgmt/CreateTable.java</file>
+            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/src/java/servletsDBMgmt/CreateDB.java</file>
+            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/web/modifyTables.jsp</file>
+            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/src/java/servletsDBMgmt/ShowUserDB.java</file>
+            <file>file:/Users/CassPratt/NetBeansProjects/ProyectoOmega/web/createTable.jsp</file>
         </group>
     </open-files>
 </project-private>
