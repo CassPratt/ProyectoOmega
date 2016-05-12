@@ -43,6 +43,7 @@ public class ShowTables extends HttpServlet {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName,username,password);
                 DatabaseMetaData meta = con.getMetaData();
+                // Obtaining all the tables in the selected DB
                 ResultSet res = meta.getTables(null, null, null, new String[] {"TABLE"});
                 if(res.next()){
                     String tableName = res.getString("TABLE_NAME");
@@ -65,10 +66,10 @@ public class ShowTables extends HttpServlet {
                                     +"<button id='btn"+tableName+"' type='submit' class=\"btnEditTable btn btn-default btn-xs\">"
                                     +"<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\">Edit Table</span>"
                                     +"</button><label> "+ tableName +"</label>"
-                                    +"</form>"
+                                    +"</form>"  // End of Scroll div
                                     +"</div>");
                     }
-                    builder.append("</div><br>");
+                    builder.append("</div><br>");   
                     res.close();
                 }else{
                     builder.append("<h3>This database has no tables</h3>");

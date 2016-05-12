@@ -42,6 +42,7 @@ public class Login extends HttpServlet {
                 Statement query = con.createStatement();
                 String username = request.getParameter("username");
                 String password = request.getParameter("password");
+                // Check if user exists
                 ResultSet rs = query.executeQuery("SELECT * FROM USERS WHERE USERNAME = '" + username + "' and PASSWORD='" + password + "'");
                 if (rs.next()) {
                     HttpSession mySession = request.getSession();

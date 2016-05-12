@@ -52,9 +52,12 @@ public class ShowAddRegistry extends HttpServlet {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName,username,password);
                 Statement query = con.createStatement();
+                
                 ResultSet rs = query.executeQuery("SELECT * FROM "+tableName);
                 ResultSetMetaData rsmd = rs.getMetaData();
                 ArrayList<String> columnNames = new ArrayList();
+                
+                // Obtaining the table's columns to display
                 for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                     columnNames.add(rsmd.getColumnName(i));
                 }
@@ -75,7 +78,7 @@ public class ShowAddRegistry extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(ShowAddRegistry.class.getName()).log(Level.SEVERE, null, ex);
             }
-            builder.append("</table></form>");
+            builder.append("</table></form>");  // End of AddRegistry form
             out.println(builder.toString());
         }
     }

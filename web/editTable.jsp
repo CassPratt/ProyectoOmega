@@ -31,13 +31,22 @@
             String tableName = (String)request.getParameter("tableName");
             mySession.setAttribute("tableName", tableName);
         %>
+        
         <h1>This is your data on table: <%=tableName%></h1>
         <%
+            // Obtaining registries in the table
             out.println("<script>setDivContent('scrollTable','"+user+"','ShowTableData','"+dbName+"','"+tableName+"');</script>");
+            // Obtaining fields of table to add a registry
             out.println("<script>setDivContent('addRegistry','"+user+"','ShowAddRegistry','"+dbName+"','"+tableName+"');</script>");
         %>
+        
+        <!------------------ SCROLL FORM ------------------>
         <br><div id="scrollTable"></div>
+        
+        <!---------------- ADD REGISTRY FORM -------------->
         <br><br><div id='addRegistry'></div>
+        
+        <!-------------- DELETE REGISTRY FORM ------------->
         <br><br><h3>Delete a Registry</h3>
         <h4>The ID is the first column on the table</h4>
         <form action='DeleteRegistry' method='POST'>

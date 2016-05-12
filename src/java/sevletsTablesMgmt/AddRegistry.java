@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sevletsTablesMgmt;
 
 import com.sun.xml.ws.util.StringUtils;
@@ -51,6 +46,7 @@ public class AddRegistry extends HttpServlet {
                 Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName,username,password);
                 Statement query = con.createStatement();
                 StringBuilder builder = new StringBuilder();
+                // Insert values obtained from request (editTable.jsp)
                 builder.append("INSERT INTO ").append(tableName).append("(");
                 for(int i=0;i<columnNames.size()-1;i++) {
                     builder.append(columnNames.get(i));
@@ -65,21 +61,21 @@ public class AddRegistry extends HttpServlet {
                     if(!isNumeric(params.get(i))){
                         builder.append("'").append(params.get(i)).append("',");
                     }else{
-                        builder.append(dbName).append(",");
+                        builder.append(params.get(i)).append(",");
                     }
                 }
                 if(!isNumeric(params.get(params.size()-1))){
                     builder.append("'").append(params.get(params.size()-1)).append("')");
                 }else{
-                    builder.append(dbName).append(")");
+                    builder.append(params.get(params.size()-1)).append(")");
                 }
-                //out.println(builder.toString());
+                out.println(builder.toString());
                 query.executeUpdate(builder.toString());
-                out.println("Success!");
+                out.println("Success!");    // Successfully added registry
                 con.close();
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(AddRegistry.class.getName()).log(Level.SEVERE, null, ex);
-                out.println("Fail!");
+                out.println("Fail!");   // Error in values or DB
             } catch (SQLException ex) {
                 Logger.getLogger(AddRegistry.class.getName()).log(Level.SEVERE, null, ex);
             }

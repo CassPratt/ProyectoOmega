@@ -31,9 +31,13 @@
         %>
         <h2>Modify table on <%=dbName%></h2>
         <%
+            // Obtaining tables list of DB
             out.println("<script>showDBTables('dbTables','"+user+"','ShowTables','"+dbName+"');</script>");
         %>
+        
         <div id="dbTables">
+            <!---------------- TABLES LIST ----------------> <!-- TO FILL -->
+            <!---------------- EDIT TABLE FORM ----------------> <!-- TO FILL -->
         </div>
     </body>
 </html>

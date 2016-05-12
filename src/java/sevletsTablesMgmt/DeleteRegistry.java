@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sevletsTablesMgmt;
 
 import java.io.IOException;
@@ -50,13 +45,15 @@ public class DeleteRegistry extends HttpServlet {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName,username,password);
                 Statement query = con.createStatement();
+              
                 String delete = "DELETE FROM "+tableName+" WHERE "+columnNames.get(0)+"=";
-                if(!isNumeric(id)){
+                if(!isNumeric(id)){ // NOT GENERAL, COULD BE NON-NUMERIC
                     delete += "'"+id+"'";
                 }else{
                     delete += id;
                 }
                 out.println(delete+"<br>");
+                // Deleting registry that corresponds to the id
                 query.executeUpdate(delete);
                 con.close();
                 out.println("Success!");
