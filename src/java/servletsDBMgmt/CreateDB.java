@@ -51,7 +51,7 @@ public class CreateDB extends HttpServlet {
                     if (!rs.next()) {   // DB name is not registered yet
                         query = con.createStatement();
                         query.executeUpdate("INSERT INTO DATABASES(USERID,DBNAME) VALUES (" + id + ",'" + _dbName + "')");
-                        con.close();
+                        con.close();    // Close DB connection
                         return "Success";
                     } else {    // DB name already registered
                         return "Database name already registered. Choose another one.";

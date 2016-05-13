@@ -42,6 +42,7 @@ public class ShowTableData extends HttpServlet {
             String tableName = request.getParameter("tableName");
             ArrayList<String> columnNames = (ArrayList<String>)mySession.getAttribute("columnNames");
             try {
+                // Connection with DB
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 Connection con = DriverManager.getConnection("jdbc:derby://localhost:1527/"+dbName,username,password);
                 Statement create = con.createStatement();
@@ -59,8 +60,9 @@ public class ShowTableData extends HttpServlet {
                     Integer index = (Integer) mySession.getAttribute("index");
                     out.println(printCorrectRegistry(lista,index,mySession,dbName,tableName));
                 }else{
-                    out.println("No hay datos!");
+                    out.println("You don't have any registries yet.");
                 }
+                con.close();    // close DB connection
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(ShowTableData.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (SQLException ex) {
@@ -74,6 +76,12 @@ public class ShowTableData extends HttpServlet {
 "            <input type='hidden' name='tableName' value='"+tableName+"' />";
         if(index==null){
             res += lista.get(0);
+        }else if(index==Integer.MIN_VALUE){
+            index = 0;
+            res += lista.get(index);
+        }else if(index==Integer.MAX_VALUE){
+            index = lista.size()-1;
+            res += lista.get(index);
         }else if(index<lista.size()){
             res += lista.get(index);
         }else{
@@ -82,6 +90,8 @@ public class ShowTableData extends HttpServlet {
         }
         res += "<br><input type='submit' name='btnPrevious' value='<' /> ";
         res += "<input type='submit' name='btnNext' value='>' /> ";
+        res += "<input type='submit' name='btnLast' value='Last' /> ";
+        res += "<input type='submit' name='btnFirst' value='First' /> ";
         res += "</form>";
         mySession.setAttribute("index", index);
         return res;

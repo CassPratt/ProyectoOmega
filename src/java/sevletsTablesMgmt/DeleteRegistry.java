@@ -61,10 +61,10 @@ public class DeleteRegistry extends HttpServlet {
                     out.println("<br>Success!");    // Successfully added registry
                     out.println("<br>"+lista.toString());
                 }else{
-                    out.println("Fallo la lista!");
+                    out.println("Fail in list!");
                 }
                 mySession.setAttribute("lista", lista);
-                con.close();
+                con.close();    // Close DB connection
                 out.println("Success!");
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(DeleteRegistry.class.getName()).log(Level.SEVERE, null, ex);

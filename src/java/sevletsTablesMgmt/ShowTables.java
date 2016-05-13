@@ -74,7 +74,7 @@ public class ShowTables extends HttpServlet {
                 }else{
                     builder.append("<h3>This database has no tables</h3>");
                 }
-                con.close();
+                con.close();    // Close DB connection
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(ShowTables.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {

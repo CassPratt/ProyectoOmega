@@ -73,6 +73,7 @@ public class ShowAddRegistry extends HttpServlet {
                 }
                 builder.append("<td><input type='submit' value='Register' /></td>");
                 builder.append("</tr></tbody>");
+                con.close();    // Close DB connection
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(ShowAddRegistry.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {

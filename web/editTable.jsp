@@ -33,9 +33,13 @@
             
             Integer index = (Integer) mySession.getAttribute("index");
             if(index==null) index = 0;
+            String btnFirst = (String) request.getParameter("btnFirst");
+            String btnLast = (String) request.getParameter("btnLast");
             String btnPrev = (String) request.getParameter("btnPrevious");
             String btnNext = (String) request.getParameter("btnNext");
-            if(btnPrev!=null&&index>0){
+            if(btnFirst!=null) index = Integer.MIN_VALUE;
+            else if(btnLast!=null) index = Integer.MAX_VALUE;
+            else if(btnPrev!=null&&index>0){
                 index--;
             }else if(btnNext!=null){
                 index++;

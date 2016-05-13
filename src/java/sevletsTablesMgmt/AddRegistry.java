@@ -80,7 +80,7 @@ public class AddRegistry extends HttpServlet {
                     out.println("Fallo la lista!");
                 }
                 mySession.setAttribute("lista", lista);
-                con.close();
+                con.close();    // Closing DB connection
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(AddRegistry.class.getName()).log(Level.SEVERE, null, ex);
                 out.println("Fail!");   // Error in values or DB
