@@ -70,6 +70,7 @@ public class CreateTable extends HttpServlet {
                 }
                 // First field in createTable.jsp is the primary key
                 queryString += "primary key("+names.get(0)+"))";    
+                out.println(queryString);
                 create.executeUpdate(queryString);
                 out.println("Table created successfully!");
                 con.close();    // Connection closed

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -71,7 +72,14 @@ public class AddRegistry extends HttpServlet {
                 }
                 out.println(builder.toString());
                 query.executeUpdate(builder.toString());
-                out.println("Success!");    // Successfully added registry
+                ArrayList<String> lista = setArrayList(con, tableName, columnNames);
+                if(lista!=null){
+                    out.println("<br>Success!");    // Successfully added registry
+                    out.println("<br>"+lista.toString());
+                }else{
+                    out.println("Fallo la lista!");
+                }
+                mySession.setAttribute("lista", lista);
                 con.close();
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(AddRegistry.class.getName()).log(Level.SEVERE, null, ex);
@@ -90,7 +98,26 @@ public class AddRegistry extends HttpServlet {
         }
         return true;
     }
-
+    
+    private ArrayList<String> setArrayList(Connection con, String tableName, ArrayList<String> columnNames){
+        try {
+            Statement query = con.createStatement();
+            ResultSet rs = query.executeQuery("SELECT * FROM "+tableName);
+            ArrayList<String> lista =new ArrayList<>();
+            while(rs.next()){
+                String temp = "";
+                for (int i = 0; i < columnNames.size(); i++) {
+                    temp += columnNames.get(i)+" "+rs.getObject(columnNames.get(i)).toString()+" ";
+                }
+                lista.add(temp);
+            }
+            return lista;
+        } catch (SQLException ex) {
+            Logger.getLogger(AddRegistry.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

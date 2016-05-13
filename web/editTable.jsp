@@ -30,18 +30,29 @@
             mySession.setAttribute("dbName", dbName);
             String tableName = (String)request.getParameter("tableName");
             mySession.setAttribute("tableName", tableName);
-        %>
-        
-        <h1>This is your data on table: <%=tableName%></h1>
-        <%
-            // Obtaining registries in the table
+            
+            Integer index = (Integer) mySession.getAttribute("index");
+            if(index==null) index = 0;
+            String btnPrev = (String) request.getParameter("btnPrevious");
+            String btnNext = (String) request.getParameter("btnNext");
+            if(btnPrev!=null&&index>0){
+                index--;
+            }else if(btnNext!=null){
+                index++;
+            }else index = 0;
+            mySession.setAttribute("index", index);
+             // Obtaining registries in the table
             out.println("<script>setDivContent('scrollTable','"+user+"','ShowTableData','"+dbName+"','"+tableName+"');</script>");
             // Obtaining fields of table to add a registry
             out.println("<script>setDivContent('addRegistry','"+user+"','ShowAddRegistry','"+dbName+"','"+tableName+"');</script>");
         %>
         
+        <h1>This is your data on table: <%=tableName%></h1>
+        
         <!------------------ SCROLL FORM ------------------>
-        <br><div id="scrollTable"></div>
+        <br><div id="scrollTable">
+            
+        </div>
         
         <!---------------- ADD REGISTRY FORM -------------->
         <br><br><div id='addRegistry'></div>
